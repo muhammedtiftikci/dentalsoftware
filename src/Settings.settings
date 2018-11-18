@@ -1,0 +1,18 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="DentalSoftware" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="CONNECTION_STRING" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">Provider = Microsoft.ACE.OLEDB.12.0; Data Source = |DataDirectory|\database.accdb;</Value>
+    </Setting>
+    <Setting Name="APPOINTMENT_START_TIME" Type="System.TimeSpan" Scope="Application">
+      <Value Profile="(Default)">08:00:00</Value>
+    </Setting>
+    <Setting Name="APPOINTMENT_END_TIME" Type="System.TimeSpan" Scope="Application">
+      <Value Profile="(Default)">18:30:00</Value>
+    </Setting>
+    <Setting Name="APPOINTMENT_DURATION" Type="System.TimeSpan" Scope="Application">
+      <Value Profile="(Default)">00:15:00</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>
