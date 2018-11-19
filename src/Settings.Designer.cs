@@ -23,7 +23,7 @@ namespace DentalSoftware {
             }
         }
         
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("Provider = Microsoft.ACE.OLEDB.12.0; Data Source = |DataDirectory|\\database.accdb" +
             ";")]
@@ -31,32 +31,99 @@ namespace DentalSoftware {
             get {
                 return ((string)(this["CONNECTION_STRING"]));
             }
+            set {
+                this["CONNECTION_STRING"] = value;
+            }
         }
         
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("08:00:00")]
         public global::System.TimeSpan APPOINTMENT_START_TIME {
             get {
                 return ((global::System.TimeSpan)(this["APPOINTMENT_START_TIME"]));
             }
+            set {
+                this["APPOINTMENT_START_TIME"] = value;
+            }
         }
         
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("18:30:00")]
         public global::System.TimeSpan APPOINTMENT_END_TIME {
             get {
                 return ((global::System.TimeSpan)(this["APPOINTMENT_END_TIME"]));
             }
+            set {
+                this["APPOINTMENT_END_TIME"] = value;
+            }
         }
         
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("00:15:00")]
         public global::System.TimeSpan APPOINTMENT_DURATION {
             get {
                 return ((global::System.TimeSpan)(this["APPOINTMENT_DURATION"]));
+            }
+            set {
+                this["APPOINTMENT_DURATION"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        public global::System.Drawing.Color APPOINTMENT_FAST_PAINT_COLOR_1 {
+            get {
+                return ((global::System.Drawing.Color)(this["APPOINTMENT_FAST_PAINT_COLOR_1"]));
+            }
+            set {
+                this["APPOINTMENT_FAST_PAINT_COLOR_1"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        public global::System.Drawing.Color APPOINTMENT_FAST_PAINT_COLOR_2 {
+            get {
+                return ((global::System.Drawing.Color)(this["APPOINTMENT_FAST_PAINT_COLOR_2"]));
+            }
+            set {
+                this["APPOINTMENT_FAST_PAINT_COLOR_2"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        public global::System.Drawing.Color APPOINTMENT_FAST_PAINT_COLOR_3 {
+            get {
+                return ((global::System.Drawing.Color)(this["APPOINTMENT_FAST_PAINT_COLOR_3"]));
+            }
+            set {
+                this["APPOINTMENT_FAST_PAINT_COLOR_3"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        public global::System.Drawing.Color APPOINTMENT_FAST_PAINT_COLOR_4 {
+            get {
+                return ((global::System.Drawing.Color)(this["APPOINTMENT_FAST_PAINT_COLOR_4"]));
+            }
+            set {
+                this["APPOINTMENT_FAST_PAINT_COLOR_4"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        public global::System.Drawing.Color APPOINTMENT_FAST_PAINT_COLOR_5 {
+            get {
+                return ((global::System.Drawing.Color)(this["APPOINTMENT_FAST_PAINT_COLOR_5"]));
+            }
+            set {
+                this["APPOINTMENT_FAST_PAINT_COLOR_5"] = value;
             }
         }
     }

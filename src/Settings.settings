@@ -2,17 +2,32 @@
 <SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="DentalSoftware" GeneratedClassName="Settings">
   <Profiles />
   <Settings>
-    <Setting Name="CONNECTION_STRING" Type="System.String" Scope="Application">
+    <Setting Name="CONNECTION_STRING" Type="System.String" Scope="User">
       <Value Profile="(Default)">Provider = Microsoft.ACE.OLEDB.12.0; Data Source = |DataDirectory|\database.accdb;</Value>
     </Setting>
-    <Setting Name="APPOINTMENT_START_TIME" Type="System.TimeSpan" Scope="Application">
+    <Setting Name="APPOINTMENT_START_TIME" Type="System.TimeSpan" Scope="User">
       <Value Profile="(Default)">08:00:00</Value>
     </Setting>
-    <Setting Name="APPOINTMENT_END_TIME" Type="System.TimeSpan" Scope="Application">
+    <Setting Name="APPOINTMENT_END_TIME" Type="System.TimeSpan" Scope="User">
       <Value Profile="(Default)">18:30:00</Value>
     </Setting>
-    <Setting Name="APPOINTMENT_DURATION" Type="System.TimeSpan" Scope="Application">
+    <Setting Name="APPOINTMENT_DURATION" Type="System.TimeSpan" Scope="User">
       <Value Profile="(Default)">00:15:00</Value>
+    </Setting>
+    <Setting Name="APPOINTMENT_FAST_PAINT_COLOR_1" Type="System.Drawing.Color" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="APPOINTMENT_FAST_PAINT_COLOR_2" Type="System.Drawing.Color" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="APPOINTMENT_FAST_PAINT_COLOR_3" Type="System.Drawing.Color" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="APPOINTMENT_FAST_PAINT_COLOR_4" Type="System.Drawing.Color" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="APPOINTMENT_FAST_PAINT_COLOR_5" Type="System.Drawing.Color" Scope="User">
+      <Value Profile="(Default)" />
     </Setting>
   </Settings>
 </SettingsFile>

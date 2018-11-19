@@ -1,7 +1,7 @@
 ﻿using System.Data;
 using System.Data.OleDb;
 
-namespace DentalSoftware
+namespace DentalSoftware.Utils
 {
     public class DatabaseService
     {
@@ -25,11 +25,13 @@ namespace DentalSoftware
 
                     command.Parameters.AddRange(values);
 
-                    using (OleDbDataAdapter adapter = new OleDbDataAdapter())
+                    using (OleDbDataAdapter adapter = new OleDbDataAdapter(command))
                     {
                         DataTable table = new DataTable();
 
                         adapter.Fill(table);
+
+                        command.Parameters.Clear();
 
                         return table;
                     }
