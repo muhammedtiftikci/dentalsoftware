@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Data.OleDb;
-using System.Linq;
-using System.Text;
 
 namespace DentalSoftware.Utils
 {
@@ -29,7 +26,7 @@ namespace DentalSoftware.Utils
         {
             string querySelect = "SELECT * FROM APPOINTMENT WHERE [DATE] = @date AND [ROW_NUMBER] = @rowNumber";
 
-            OleDbParameter pDATE = new OleDbParameter("@date", date);
+            OleDbParameter pDATE = new OleDbParameter("@date", date.Date);
             OleDbParameter pROW_NUMBER = new OleDbParameter("@rowNumber", rowNumber);
             OleDbParameter pFIELD = new OleDbParameter("@field", value);
 

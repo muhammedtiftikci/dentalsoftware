@@ -22,7 +22,7 @@ namespace DentalSoftware.Utils
                 {
                     command.Connection = connection;
                     command.CommandText = query;
-
+                    
                     command.Parameters.AddRange(values);
 
                     using (OleDbDataAdapter adapter = new OleDbDataAdapter(command))

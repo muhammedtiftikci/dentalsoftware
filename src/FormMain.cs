@@ -1,13 +1,8 @@
 ﻿using DentalSoftware.Forms;
 using DentalSoftware.Utils;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Data.OleDb;
 using System.Drawing;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 
 namespace DentalSoftware
@@ -15,6 +10,7 @@ namespace DentalSoftware
     public partial class FormMain : Form
     {
         private DatabaseService _dbService;
+        private PatientService _patientService;
         private AppointmentService _appointmentService;
 
         private DateTime _date;
@@ -25,20 +21,17 @@ namespace DentalSoftware
 
             Init();
 
+            LoadPatientGrid();
             LoadAppointmentGrid(DateTime.Now.Date);
         }
 
         private void Init()
         {
-            LoadFastPaintColors(btnFastPaint1, Settings.Default.APPOINTMENT_FAST_PAINT_COLOR_1);
-            LoadFastPaintColors(btnFastPaint2, Settings.Default.APPOINTMENT_FAST_PAINT_COLOR_2);
-            LoadFastPaintColors(btnFastPaint3, Settings.Default.APPOINTMENT_FAST_PAINT_COLOR_3);
-            LoadFastPaintColors(btnFastPaint4, Settings.Default.APPOINTMENT_FAST_PAINT_COLOR_4);
-            LoadFastPaintColors(btnFastPaint5, Settings.Default.APPOINTMENT_FAST_PAINT_COLOR_5);
-
             _dbService = new DatabaseService(Settings.Default.CONNECTION_STRING);
+            _patientService = new PatientService(_dbService);
             _appointmentService = new AppointmentService(_dbService);
 
+            // Set up appointment grid.
             TimeSpan startTime = Settings.Default.APPOINTMENT_START_TIME;
             TimeSpan endTime = Settings.Default.APPOINTMENT_END_TIME;
             TimeSpan duration = Settings.Default.APPOINTMENT_DURATION;
@@ -57,7 +50,31 @@ namespace DentalSoftware
             }
 
             dataGridViewAppointments.RowHeadersWidthSizeMode = DataGridViewRowHeadersWidthSizeMode.AutoSizeToDisplayedHeaders;
+
+            // Init fast paint button iamges.
+            SetFastPaintButtonImage(btnFastPaint1, Settings.Default.APPOINTMENT_FAST_PAINT_COLOR_1);
+            SetFastPaintButtonImage(btnFastPaint2, Settings.Default.APPOINTMENT_FAST_PAINT_COLOR_2);
+            SetFastPaintButtonImage(btnFastPaint3, Settings.Default.APPOINTMENT_FAST_PAINT_COLOR_3);
+            SetFastPaintButtonImage(btnFastPaint4, Settings.Default.APPOINTMENT_FAST_PAINT_COLOR_4);
+            SetFastPaintButtonImage(btnFastPaint5, Settings.Default.APPOINTMENT_FAST_PAINT_COLOR_5);
         }
+
+        #region PATIENT
+
+        private void LoadPatientGrid()
+        {
+            DataTable table = _patientService.GetDataTable();
+
+            dataGridViewPatients.DataSource = table;
+
+
+            for (int i = 1; i <= table.Rows.Count; i++)
+            {
+                dataGridViewPatients.Rows[i - 1].HeaderCell.Value = i.ToString();
+            }
+        }
+
+        #endregion
 
         private void LoadAppointmentGrid(DateTime date)
         {
@@ -191,8 +208,15 @@ namespace DentalSoftware
 
         private void btnFindPatient_Click(object sender, EventArgs e)
         {
+            HastaAra();
+        }
+
+        private void HastaAra()
+        {
             FormFind form = new FormFind();
             form.ShowDialog();
+
+            // TODO: Find
         }
 
         private void tabControl1_SelectedIndexChanged(object sender, EventArgs e)
@@ -284,7 +308,7 @@ namespace DentalSoftware
 
                 if (dr == DialogResult.OK)
                 {
-                    LoadFastPaintColors(btnFastPaint1, colorDialog.Color);
+                    SetFastPaintButtonImage(btnFastPaint1, colorDialog.Color);
 
                     Settings.Default.APPOINTMENT_FAST_PAINT_COLOR_1 = colorDialog.Color;
                     Settings.Default.Save();
@@ -301,7 +325,7 @@ namespace DentalSoftware
 
                 if (dr == DialogResult.OK)
                 {
-                    LoadFastPaintColors(btnFastPaint2, colorDialog.Color);
+                    SetFastPaintButtonImage(btnFastPaint2, colorDialog.Color);
 
                     Settings.Default.APPOINTMENT_FAST_PAINT_COLOR_2 = colorDialog.Color;
                     Settings.Default.Save();
@@ -318,7 +342,7 @@ namespace DentalSoftware
 
                 if (dr == DialogResult.OK)
                 {
-                    LoadFastPaintColors(btnFastPaint3, colorDialog.Color);
+                    SetFastPaintButtonImage(btnFastPaint3, colorDialog.Color);
 
                     Settings.Default.APPOINTMENT_FAST_PAINT_COLOR_3 = colorDialog.Color;
                     Settings.Default.Save();
@@ -335,7 +359,7 @@ namespace DentalSoftware
 
                 if (dr == DialogResult.OK)
                 {
-                    LoadFastPaintColors(btnFastPaint4, colorDialog.Color);
+                    SetFastPaintButtonImage(btnFastPaint4, colorDialog.Color);
 
                     Settings.Default.APPOINTMENT_FAST_PAINT_COLOR_4 = colorDialog.Color;
                     Settings.Default.Save();
@@ -352,7 +376,7 @@ namespace DentalSoftware
 
                 if (dr == DialogResult.OK)
                 {
-                    LoadFastPaintColors(btnFastPaint5, colorDialog.Color);
+                    SetFastPaintButtonImage(btnFastPaint5, colorDialog.Color);
 
                     Settings.Default.APPOINTMENT_FAST_PAINT_COLOR_5 = colorDialog.Color;
                     Settings.Default.Save();
@@ -360,7 +384,7 @@ namespace DentalSoftware
             }
         }
 
-        private void LoadFastPaintColors(ToolStripMenuItem button, Color color)
+        private void SetFastPaintButtonImage(ToolStripMenuItem button, Color color)
         {
             if (color == Color.White)
             {
@@ -380,6 +404,25 @@ namespace DentalSoftware
 
                 button.Image = bitmap;
             }
+        }
+
+        private void FormMain_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (tabControl1.SelectedTab == tabPagePatients)
+            {
+                if (e.Control && e.KeyCode == Keys.F)
+                {
+                    HastaAra();
+                }
+            }
+        }
+
+        private void dataGridViewPatients_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
+        {
+            int id = (int)dataGridViewPatients.Rows[e.RowIndex].Cells["clmID"].Value;
+
+            FormPatientDetail form = new FormPatientDetail(_dbService, id);
+            form.ShowDialog();
         }
     }
 }
