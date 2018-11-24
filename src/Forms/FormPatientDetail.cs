@@ -5,12 +5,15 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Windows.Forms;
+using DentalSoftware.Models;
 using DentalSoftware.Utils;
 
 namespace DentalSoftware.Forms
 {
     public partial class FormPatientDetail : Form
     {
+        public bool Changed { get; private set; }
+
         private readonly Color PEN_SPLITTER_COLOR = Color.Red;
         private readonly Color PEN_BRIDGE_COLOR = Color.Black;
         private const int PEN_BRIDGE_WIDTH = 3;
@@ -19,6 +22,7 @@ namespace DentalSoftware.Forms
 
         private DatabaseService _dbService;
         private PatientService _patientService;
+        private TreatmentService _treatmentService;
 
         private Dictionary<ToothVerticalPosition, Button[]> _teeth;
         private Dictionary<ToothVerticalPosition, ToothStatusFlags[]> _flags;
@@ -44,6 +48,7 @@ namespace DentalSoftware.Forms
         private void Init()
         {
             _patientService = new PatientService(_dbService);
+            _treatmentService = new TreatmentService(_dbService);
 
             string teethMap = _patientService.GetTeethMap(_patientId);
 
@@ -100,6 +105,8 @@ namespace DentalSoftware.Forms
                     tabPageTeeth.Controls.Add(button);
                 }
             }
+
+            LoadTreatmentGrid();
         }
 
         private ToothStatusFlags[] StringToFlags(string array)
@@ -395,6 +402,72 @@ namespace DentalSoftware.Forms
             teethMap += _flags[ToothVerticalPosition.BOTTOM].Aggregate("", (current, flag) => current + (int)flag);
 
             _patientService.SetTeethMap(_patientId, teethMap);
+        }
+
+        private void LoadTreatmentGrid()
+        {
+            DataTable table = _treatmentService.GetDataTable(_patientId);
+
+            dataGridViewTreatments.DataSource = table;
+        }
+
+        private void dataGridViewTreatments_CellEndEdit(object sender, DataGridViewCellEventArgs e)
+        {
+            var row = dataGridViewTreatments.Rows[e.RowIndex];
+
+            int? id = row.Cells["clmTREATMENT_ID"].Value is DBNull ? default(int?) : (int)row.Cells["clmTREATMENT_ID"].Value;
+            DateTime date = (DateTime)row.Cells["clmTREATMENT_DATE"].Value;
+            string description = row.Cells["clmTREATMENT_DESCRIPTION"].Value is DBNull ? string.Empty : (string)row.Cells["clmTREATMENT_DESCRIPTION"].Value;
+            decimal price = (decimal)row.Cells["clmTREATMENT_PRICE"].Value;
+            decimal paid = (decimal)row.Cells["clmTREATMENT_PAID"].Value;
+
+            Treatment model = new Treatment()
+            {
+                ID = id.HasValue ? id.Value : 0,
+                PATIENT_ID = _patientId,
+                DATE = date,
+                DESCRIPTION = description,
+                PRICE = (float)price,
+                PAID = (float)paid,
+            };
+
+            int affectedRows = 0;
+
+            if (!id.HasValue)
+            {
+                affectedRows = _treatmentService.Insert(model);
+            }
+            else
+            {
+                affectedRows = _treatmentService.Update(model);
+            }
+            
+            if (affectedRows == 0)
+            {
+                MessageBox.Show("Kayıt eklenemedi.", "Hata", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            else if (affectedRows > 1)
+            {
+                MessageBox.Show("Birden fazla etkilenen satır oldu.", "Dikkat", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+            else
+            {
+                Changed = true;
+
+                LoadTreatmentGrid();
+            }
+        }
+
+        private void dataGridViewTreatments_DefaultValuesNeeded(object sender, DataGridViewRowEventArgs e)
+        {
+            e.Row.Cells["clmTREATMENT_DATE"].Value = DateTime.Now;
+            e.Row.Cells["clmTREATMENT_PRICE"].Value = 0m;
+            e.Row.Cells["clmTREATMENT_PAID"].Value = 0m;
+        }
+
+        private void FormPatientDetail_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            dataGridViewTreatments.EndEdit();
         }
     }
 

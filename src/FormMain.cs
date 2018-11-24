@@ -63,14 +63,25 @@ namespace DentalSoftware
 
         private void LoadPatientGrid()
         {
+            int? selectedRowIndex = default(int?);
+
+            if (dataGridViewPatients.Rows.Count > 0) {
+                if (dataGridViewPatients.SelectedRows.Count > 0) {
+                    selectedRowIndex = dataGridViewPatients.SelectedRows[0].Index;
+                }
+            }
+
             DataTable table = _patientService.GetDataTable();
 
             dataGridViewPatients.DataSource = table;
 
-
             for (int i = 1; i <= table.Rows.Count; i++)
             {
                 dataGridViewPatients.Rows[i - 1].HeaderCell.Value = i.ToString();
+            }
+
+            if (selectedRowIndex.HasValue) {
+                dataGridViewPatients.Rows[selectedRowIndex.Value].Selected = true;
             }
         }
 
@@ -423,6 +434,87 @@ namespace DentalSoftware
 
             FormPatientDetail form = new FormPatientDetail(_dbService, id);
             form.ShowDialog();
+
+            if (form.Changed) {
+                LoadPatientGrid();
+            }
         }
+
+        #region Patient CRUD
+
+        private void btnAddPatient_Click(object sender, EventArgs e)
+        {
+            FormPatientIU form = new FormPatientIU(_dbService);
+            form.ShowDialog();
+
+            if (form.DialogResult == DialogResult.OK)
+            {
+                int rowIndex = dataGridViewPatients.SelectedRows[0].Index;
+
+                LoadPatientGrid();
+
+                dataGridViewPatients.Rows[rowIndex].Selected = true;
+            }
+        }
+
+        private void btnEditPatient_Click(object sender, EventArgs e)
+        {
+            if (dataGridViewPatients.SelectedRows.Count != 1)
+            {
+                return;
+            }
+
+            int patientId = (int)dataGridViewPatients.SelectedRows[0].Cells["clmID"].Value;
+
+            FormPatientIU form = new FormPatientIU(_dbService, patientId);
+            form.ShowDialog();
+
+            if (form.DialogResult == DialogResult.OK)
+            {
+                int rowIndex = dataGridViewPatients.SelectedRows[0].Index;
+
+                LoadPatientGrid();
+
+                dataGridViewPatients.Rows[rowIndex].Selected = true;
+            }
+        }
+
+        private void btnDeletePatient_Click(object sender, EventArgs e)
+        {
+            if (dataGridViewPatients.SelectedRows.Count != 1)
+            {
+                return;
+            }
+
+            int patientId = (int)dataGridViewPatients.SelectedRows[0].Cells["clmID"].Value;
+
+            string ad = (string)dataGridViewPatients.SelectedRows[0].Cells["clmPATIENT_NAME"].Value;
+            string soyad = (string)dataGridViewPatients.SelectedRows[0].Cells["clmPATIENT_SURNAME"].Value;
+
+            DialogResult dr = MessageBox.Show($"{ad} {soyad} hasta bilgileri silinsin mi?", "Dikkat", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+
+            if (dr != DialogResult.Yes)
+            {
+                return;
+            }
+
+            PatientService patientService = new PatientService(_dbService);
+            int affectedRows = patientService.Delete(patientId);
+
+            if (affectedRows == 0)
+            {
+                MessageBox.Show("Silme işlemi başarısız oldu.", "Hata", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            else if (affectedRows == 1)
+            {
+                LoadPatientGrid();
+            }
+            else
+            {
+                MessageBox.Show(affectedRows + " adet hasta kaydı silindi!", "Dikkat", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+        }
+
+        #endregion
     }
 }

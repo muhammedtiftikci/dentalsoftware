@@ -116,18 +116,21 @@
             this.btnAddPatient.Name = "btnAddPatient";
             this.btnAddPatient.Size = new System.Drawing.Size(149, 22);
             this.btnAddPatient.Text = "Hasta Ekle";
+            this.btnAddPatient.Click += new System.EventHandler(this.btnAddPatient_Click);
             // 
             // btnEditPatient
             // 
             this.btnEditPatient.Name = "btnEditPatient";
             this.btnEditPatient.Size = new System.Drawing.Size(149, 22);
             this.btnEditPatient.Text = "Hasta Düzenle";
+            this.btnEditPatient.Click += new System.EventHandler(this.btnEditPatient_Click);
             // 
             // btnDeletePatient
             // 
             this.btnDeletePatient.Name = "btnDeletePatient";
             this.btnDeletePatient.Size = new System.Drawing.Size(149, 22);
             this.btnDeletePatient.Text = "Hasta Sil";
+            this.btnDeletePatient.Click += new System.EventHandler(this.btnDeletePatient_Click);
             // 
             // btnFindPatient
             // 
@@ -137,6 +140,7 @@
             this.btnFindPatient.Name = "btnFindPatient";
             this.btnFindPatient.Size = new System.Drawing.Size(23, 22);
             this.btnFindPatient.Text = "Hasta Ara";
+            this.btnFindPatient.ToolTipText = "Hasta Ara (Ctrl + F)";
             this.btnFindPatient.Click += new System.EventHandler(this.btnFindPatient_Click);
             // 
             // separatorAppointment
@@ -299,6 +303,7 @@
             // 
             this.dataGridViewPatients.AllowUserToAddRows = false;
             this.dataGridViewPatients.AllowUserToDeleteRows = false;
+            this.dataGridViewPatients.AllowUserToResizeRows = false;
             this.dataGridViewPatients.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridViewPatients.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.clmID,
