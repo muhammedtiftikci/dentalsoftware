@@ -18,11 +18,30 @@ namespace DentalSoftware
         public FormMain()
         {
             InitializeComponent();
+        }
 
-            Init();
+        private void FormMain_Shown(object sender, EventArgs e)
+        {
+            try
+            {
+                Init();
 
-            LoadPatientGrid();
-            LoadAppointmentGrid(DateTime.Now.Date);
+                LoadPatientGrid();
+                LoadAppointmentGrid(DateTime.Now.Date);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Bir hata oluştu. Program kapatılacak.", "Hata", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+                MessageBox.Show(ex.Message, "Hata", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+                if (ex.InnerException != null)
+                {
+                    MessageBox.Show(ex.InnerException.Message, "Hata", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+
+                Application.Exit();
+            }
         }
 
         private void Init()
@@ -65,8 +84,10 @@ namespace DentalSoftware
         {
             int? selectedRowIndex = default(int?);
 
-            if (dataGridViewPatients.Rows.Count > 0) {
-                if (dataGridViewPatients.SelectedRows.Count > 0) {
+            if (dataGridViewPatients.Rows.Count > 0)
+            {
+                if (dataGridViewPatients.SelectedRows.Count > 0)
+                {
                     selectedRowIndex = dataGridViewPatients.SelectedRows[0].Index;
                 }
             }
@@ -80,9 +101,12 @@ namespace DentalSoftware
                 dataGridViewPatients.Rows[i - 1].HeaderCell.Value = i.ToString();
             }
 
-            if (selectedRowIndex.HasValue) {
+            if (selectedRowIndex.HasValue)
+            {
                 dataGridViewPatients.Rows[selectedRowIndex.Value].Selected = true;
             }
+
+            dataGridViewPatients.Focus();
         }
 
         #endregion
@@ -227,7 +251,18 @@ namespace DentalSoftware
             FormFind form = new FormFind();
             form.ShowDialog();
 
-            // TODO: Find
+            if (form.DialogResult == DialogResult.OK)
+            {
+                DataTable table = _patientService.Search(form.SearchText);
+                dataGridViewPatients.DataSource = table;
+
+                for (int i = 1; i <= table.Rows.Count; i++)
+                {
+                    dataGridViewPatients.Rows[i - 1].HeaderCell.Value = i.ToString();
+                }
+            }
+
+            dataGridViewAppointments.Focus();
         }
 
         private void tabControl1_SelectedIndexChanged(object sender, EventArgs e)
@@ -242,7 +277,7 @@ namespace DentalSoftware
             if (tabControl1.SelectedTab == tabPagePatients)
             {
                 Text = $"Hastalar - {programName}";
-                
+
                 ddbPatient.Visible = true;
                 btnFindPatient.Visible = true;
                 separatorAppointment.Visible = false;
@@ -261,7 +296,7 @@ namespace DentalSoftware
                 btnGoTo.Visible = true;
                 btnPaint.Visible = true;
 
-                lblInfo.Text = $"Tarih: {_date.ToString("dd MMMM yyyy")}";
+                lblInfo.Text = $"Tarih: {_date.ToLongDateString()}";
             }
         }
 
@@ -425,17 +460,57 @@ namespace DentalSoftware
                 {
                     HastaAra();
                 }
+                else if (e.KeyCode == Keys.Escape)
+                {
+                    DataTable table = _patientService.Search(string.Empty);
+                    dataGridViewPatients.DataSource = table;
+
+                    for (int i = 1; i <= table.Rows.Count; i++)
+                    {
+                        dataGridViewPatients.Rows[i - 1].HeaderCell.Value = i.ToString();
+                    }
+
+                    dataGridViewAppointments.Focus();
+                }
+                else if (e.KeyCode == Keys.Enter)
+                {
+                    if (dataGridViewPatients.SelectedRows.Count > 0)
+                    {
+                        int selectedRowIndex = dataGridViewPatients.SelectedRows[0].Index;
+
+                        if (selectedRowIndex >= 0)
+                        {
+                            //ShowDetail(selectedRowIndex);
+                        }
+                    }
+                }
+            }
+            else if (tabControl1.SelectedTab == tabPageAppointments)
+            {
+                if (e.Control && e.KeyCode == Keys.T)
+                {
+                    btnGoTo_ButtonClick(this, EventArgs.Empty);
+                }
             }
         }
 
         private void dataGridViewPatients_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
-            int id = (int)dataGridViewPatients.Rows[e.RowIndex].Cells["clmID"].Value;
+            ShowDetail(e.RowIndex);
+        }
+
+        private void ShowDetail(int rowIndex)
+        {
+            int id = (int)dataGridViewPatients.Rows[rowIndex].Cells["clmID"].Value;
+            string ad = (string)dataGridViewPatients.Rows[rowIndex].Cells["clmPATIENT_NAME"].Value;
+            string soyad = (string)dataGridViewPatients.Rows[rowIndex].Cells["clmPATIENT_SURNAME"].Value;
 
             FormPatientDetail form = new FormPatientDetail(_dbService, id);
+            form.Text = $"{ad} {soyad} - {form.Text}";
             form.ShowDialog();
 
-            if (form.Changed) {
+            if (form.Changed)
+            {
                 LoadPatientGrid();
             }
         }
@@ -516,5 +591,25 @@ namespace DentalSoftware
         }
 
         #endregion
+
+        private void dataGridViewPatients_CellPainting(object sender, DataGridViewCellPaintingEventArgs e)
+        {
+            if (e.RowIndex < 0)
+            {
+                return;
+            }
+
+            decimal balance = (decimal)dataGridViewPatients.Rows[e.RowIndex].Cells["clmPATIENT_BALANCE"].Value;
+
+            if (balance > 0)
+            {
+                e.CellStyle.ForeColor = Color.Red;
+                e.CellStyle.Font = new Font(e.CellStyle.Font, FontStyle.Bold);
+            }
+            else if (balance < 0)
+            {
+                e.CellStyle.ForeColor = Color.Blue;
+            }
+        }
     }
 }

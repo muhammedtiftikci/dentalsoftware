@@ -25,7 +25,8 @@ namespace DentalSoftware.Utils
                                    ,[PRICE]
                                    ,[PAID]
                              FROM [TREATMENT]
-                             WHERE [PATIENT_ID] = @id";
+                             WHERE [PATIENT_ID] = @id
+                             ORDER BY [CREATED_DATE]";
 
             OleDbParameter pID = new OleDbParameter("@id", patientId);
 

@@ -4,6 +4,8 @@ namespace DentalSoftware.Forms
 {
     public partial class FormFind : Form
     {
+        public string SearchText { get { return textBox1.Text; } }
+
         public FormFind()
         {
             InitializeComponent();

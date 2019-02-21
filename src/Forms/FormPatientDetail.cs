@@ -141,6 +141,7 @@ namespace DentalSoftware.Forms
         /// <param name="index">0 - 15</param>
         private void Rules(ToothVerticalPosition tvp, int index)
         {
+            bool dolgu = false;
             bool kopruSaga = true;
             bool kopruSola = true;
             bool gosterGizle = true;
@@ -202,6 +203,7 @@ namespace DentalSoftware.Forms
                 implant = false;
             }
 
+            btnDolgu.Visible = dolgu;
             btnKopruSaga.Visible = kopruSaga;
             btnKopruSola.Visible = kopruSola;
             btnGizleGoster.Visible = gosterGizle;
@@ -232,6 +234,7 @@ namespace DentalSoftware.Forms
                         .Replace("_", "");
 
                     button.BackgroundImage = Image.FromFile("images/" + imageName + ".jpg");
+                    button.Text = string.Empty;
 
                     switch (flags)
                     {
@@ -266,6 +269,12 @@ namespace DentalSoftware.Forms
                             break;
 
                         case ToothStatusFlags.Filling:
+                            button.Text = "D";
+                            button.ForeColor = Color.Green;
+                            button.Font = new Font(button.Font, FontStyle.Bold);
+                            button.TextAlign = row.Key == ToothVerticalPosition.TOP
+                                ? ContentAlignment.BottomCenter
+                                : ContentAlignment.TopCenter;
 
                             break;
 
@@ -338,6 +347,23 @@ namespace DentalSoftware.Forms
             else if (flags == ToothStatusFlags.Normal)
             {
                 _flags[_lastSelectedToothVerticalPosition][_lastSelectedToothIndex] = ToothStatusFlags.Hidden;
+            }
+
+            RenderTooth();
+        }
+
+        private void btnDolgu_Click(object sender, EventArgs e)
+        {
+            Button button = _teeth[_lastSelectedToothVerticalPosition][_lastSelectedToothIndex];
+            ToothStatusFlags flags = _flags[_lastSelectedToothVerticalPosition][_lastSelectedToothIndex];
+
+            if (flags == ToothStatusFlags.Normal)
+            {
+                _flags[_lastSelectedToothVerticalPosition][_lastSelectedToothIndex] = ToothStatusFlags.Filling;
+            }
+            else if (flags == ToothStatusFlags.Filling)
+            {
+                _flags[_lastSelectedToothVerticalPosition][_lastSelectedToothIndex] = ToothStatusFlags.Normal;
             }
 
             RenderTooth();
