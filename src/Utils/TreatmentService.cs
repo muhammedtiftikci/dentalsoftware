@@ -24,6 +24,7 @@ namespace DentalSoftware.Utils
                                    ,[DESCRIPTION]
                                    ,[PRICE]
                                    ,[PAID]
+                                   ,[PRICE] - [PAID] AS NET
                              FROM [TREATMENT]
                              WHERE [PATIENT_ID] = @id
                              ORDER BY [CREATED_DATE]";

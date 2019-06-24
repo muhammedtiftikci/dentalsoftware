@@ -13,6 +13,7 @@ namespace DentalSoftware.Forms
     public partial class FormPatientDetail : Form
     {
         public bool Changed { get; private set; }
+        public double TotalNet { get; private set; }
 
         private readonly Color PEN_SPLITTER_COLOR = Color.Red;
         private readonly Color PEN_BRIDGE_COLOR = Color.Black;
@@ -433,12 +434,33 @@ namespace DentalSoftware.Forms
         private void LoadTreatmentGrid()
         {
             DataTable table = _treatmentService.GetDataTable(_patientId);
+            TotalNet = Convert.ToDouble(table.Rows.Cast<DataRow>().Sum(x => (decimal)x["NET"]));
 
-            dataGridViewTreatments.DataSource = table;
+            if (dataGridViewTreatments.DataSource == null)
+            {
+                dataGridViewTreatments.DataSource = table;
+            }
+            else
+            {
+                DataTable dt = (DataTable)dataGridViewTreatments.DataSource;
+
+                dt.Rows.Clear();
+
+                foreach(DataRow row in table.Rows)
+                {
+                    dt.ImportRow(row);
+                }
+
+                dataGridViewTreatments.Refresh();
+            }
         }
+
+        private bool _handleCellEndEdit = false;
 
         private void dataGridViewTreatments_CellEndEdit(object sender, DataGridViewCellEventArgs e)
         {
+            if (_handleCellEndEdit) return;
+
             var row = dataGridViewTreatments.Rows[e.RowIndex];
 
             int? id = row.Cells["clmTREATMENT_ID"].Value is DBNull ? default(int?) : (int)row.Cells["clmTREATMENT_ID"].Value;
@@ -480,7 +502,9 @@ namespace DentalSoftware.Forms
             {
                 Changed = true;
 
+                _handleCellEndEdit = true;
                 LoadTreatmentGrid();
+                _handleCellEndEdit = false;
             }
         }
 

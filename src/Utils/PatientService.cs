@@ -16,8 +16,7 @@ namespace DentalSoftware.Utils
 
         public DataTable GetDataTable()
         {
-            string query = @"SELECT TOP 100
-                                    [ID]
+            string query = @"SELECT [ID]
                                    ,[NAME]
                                    ,[SURNAME]
                                    ,[ADDRESS]
@@ -45,15 +44,14 @@ namespace DentalSoftware.Utils
             return _dbService.GetDataTable(query, pACTIVE);
         }
 
-        public DataTable Search(string text)
+        public DataTable Search(string text, bool showAll = false)
         {
-            if (string.IsNullOrWhiteSpace(text))
+            if (string.IsNullOrWhiteSpace(text) && !showAll)
             {
                 return GetDataTable();
             }
 
-            string query = @"SELECT TOP 100
-                                    [ID]
+            string query = @"SELECT [ID]
                                    ,[NAME]
                                    ,[SURNAME]
                                    ,[ADDRESS]
@@ -73,12 +71,12 @@ namespace DentalSoftware.Utils
                              ) TREATMENT ON TREATMENT.PATIENT_ID = PATIENT.ID
 
                              WHERE [ACTIVE] = @active AND
-                                   ([NAME] LIKE @text OR [SURNAME] LIKE @text OR [ADDRESS] LIKE @text OR [PHONE_NUMBER] LIKE @text)
+                                   ([NAME] LIKE @text OR [SURNAME] LIKE @text OR [ADDRESS] LIKE @text OR [PHONE_NUMBER] LIKE @text OR ([NAME] + ' ' + [SURNAME]) LIKE @text)
 
                              ORDER BY [SURNAME], [NAME]";
 
             OleDbParameter pACTIVE = new OleDbParameter("@active", true);
-            OleDbParameter pTEXT = new OleDbParameter("@text", $"%{text.Replace("'", "''")}%");
+            OleDbParameter pTEXT = new OleDbParameter("@text", $"%{text.Replace(' ', '%')}%");
 
             return _dbService.GetDataTable(query, pACTIVE, pTEXT);
         }

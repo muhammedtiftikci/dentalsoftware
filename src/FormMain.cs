@@ -3,6 +3,7 @@ using DentalSoftware.Utils;
 using System;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Windows.Forms;
 
 namespace DentalSoftware
@@ -22,6 +23,8 @@ namespace DentalSoftware
 
         private void FormMain_Shown(object sender, EventArgs e)
         {
+            this.WindowState = FormWindowState.Maximized;
+
             try
             {
                 Init();
@@ -253,7 +256,7 @@ namespace DentalSoftware
 
             if (form.DialogResult == DialogResult.OK)
             {
-                DataTable table = _patientService.Search(form.SearchText);
+                DataTable table = _patientService.Search(form.SearchText, true);
                 dataGridViewPatients.DataSource = table;
 
                 for (int i = 1; i <= table.Rows.Count; i++)
@@ -280,7 +283,6 @@ namespace DentalSoftware
 
                 ddbPatient.Visible = true;
                 btnFindPatient.Visible = true;
-                separatorAppointment.Visible = false;
                 btnGoTo.Visible = false;
                 btnPaint.Visible = false;
 
@@ -292,7 +294,6 @@ namespace DentalSoftware
 
                 ddbPatient.Visible = false;
                 btnFindPatient.Visible = false;
-                separatorAppointment.Visible = true;
                 btnGoTo.Visible = true;
                 btnPaint.Visible = true;
 
@@ -511,7 +512,9 @@ namespace DentalSoftware
 
             if (form.Changed)
             {
-                LoadPatientGrid();
+                // TODO: Hasta işlemlerinde bir değişiklik olduktan sonra bakiyeyi güncelle.
+                //LoadPatientGrid();
+                dataGridViewPatients.Rows[rowIndex].Cells["clmPATIENT_BALANCE"].Value = form.TotalNet;
             }
         }
 
@@ -609,6 +612,34 @@ namespace DentalSoftware
             else if (balance < 0)
             {
                 e.CellStyle.ForeColor = Color.Blue;
+            }
+        }
+
+        private void btnShowAllPatients_Click(object sender, EventArgs e)
+        {
+            DataTable table = _patientService.Search(string.Empty, true);
+            dataGridViewPatients.DataSource = table;
+        }
+
+        private void btnBackup_Click(object sender, EventArgs e)
+        {
+            string currentFileName = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "database.accdb");
+
+            if (File.Exists(currentFileName))
+            {
+                SaveFileDialog sfd = new SaveFileDialog();
+                sfd.FileName = $"Musteri Takip {DateTime.Now.ToString("yyyy.MM.dd HH.mm.ss")}.db";
+                sfd.Filter = "database|*.db";
+                var dr = sfd.ShowDialog();
+
+                if (dr == DialogResult.OK)
+                {
+                    File.Copy(currentFileName, sfd.FileName);
+                }
+            }
+            else
+            {
+                MessageBox.Show("Veritabanı dosyası bulunamadı.", "Hata", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
     }
